@@ -1,10 +1,10 @@
 import React from "react";
 import ContentEditable from 'react-contenteditable'
 import sanitizeHtml from 'sanitize-html'
-import { SyntaxGroupType } from "./types";
+import { CodeBoxProps, SyntaxGroupType } from "./types";
 
 
-const mockData: SyntaxGroupType[] = [
+export const mockData: SyntaxGroupType[] = [
 	{
 		name: 'types',
 		priority: 0,
@@ -41,19 +41,10 @@ const mockData: SyntaxGroupType[] = [
 ]
 
 
-export const CodeBox = () => {
+export const CodeBox = ({syntaxGroups}: CodeBoxProps) => {
 	const editable = React.useRef<HTMLElement>();
 	const [value, setValue] = React.useState<string>('');
 
-	const syntaxGroups: SyntaxGroupType[] = mockData.sort((a, b) => b.priority - a.priority);
-
-	const generateKeywordsMap = (sgs: SyntaxGroupType[]) => {
-		let newMap = new Map<Array<string>, SyntaxGroupType>();
-		sgs.forEach(sg => {
-			newMap.set(sg.keywords, sg);
-		})
-		return newMap;
-	}
 
 
 	const sanitizeConf = {
@@ -68,28 +59,6 @@ export const CodeBox = () => {
 		return `<span style="${textColor ? `color: ${textColor}` : ''}; ${highlightColor ? `background-color: ${highlightColor}` : ''}">` + text + '</span>'
 	}
 
-	const parseKeywordsInLine = (line: string) => {
-		let newLine = ''
-		let keywords = line.split(' ');
-		let index = 0;
-		keywords.forEach(word => {
-			let found = false;
-			syntaxGroups.forEach(sg => {
-				if (sg.keywords.indexOf(word) > -1) {
-					newLine += wrapText(word, sg.textColor, sg.highlightColor);
-					found = true;
-				}
-			})
-			if (!found) {
-				newLine += word;
-			}
-			if (index !== keywords.length - 1){
-				newLine += ' '
-			}
-			index += 1
-		})
-		return newLine;
-	}
 
 	const parseLine = (line: string) => {
 		let newLine = line;

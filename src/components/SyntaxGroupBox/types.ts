@@ -1,26 +1,27 @@
-export {};
+import { SyntaxGroupType } from "../codeBox/types";
 
 
-export type SyntaxGroupType = {
+
+export interface SyntaxGroupBoxProps {
+    initialDisplay: SyntaxGroupBoxType;
+}
+
+export type SyntaxGroupBoxType = {
     name: string;
     priority: number;
-    keywords: Array<string>;
+    keywords: string;
     textColor?: string;
     highlightColor?: string;
     fullWord: boolean;
     fullLine: boolean;
 }
 
-export const newGroupTemplate: SyntaxGroupType = {
+export const newGroupTemplate: SyntaxGroupBoxType = {
     name: '',
     priority: 0,
-    keywords: [],
+    keywords: '',
     textColor: '#000000',
     highlightColor: '#ffffff',
     fullWord: true,
     fullLine: false
-}
-
-export interface CodeBoxProps {
-    syntaxGroups: Array<SyntaxGroupType>
 }
