@@ -3,8 +3,10 @@ export {};
 
 export type SyntaxGroupType = {
     name: string;
-    priority?: number;
+    priority: number;
     keywords: Array<string>;
     textColor?: string;
     highlightColor?: string;
+    fullWord: boolean;
+    fullLine: boolean;
 }

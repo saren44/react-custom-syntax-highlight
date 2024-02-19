@@ -1,4 +1,3 @@
-import { setSelectionRange } from "@testing-library/user-event/dist/utils";
 import React from "react";
 import ContentEditable from 'react-contenteditable'
 import sanitizeHtml from 'sanitize-html'
@@ -11,14 +10,26 @@ const mockData: SyntaxGroupType[] = [
 		priority: 0,
 		keywords: ['int', 'string', 'bool', 'float'],
 		textColor: 'green',
-		highlightColor: 'white'
+		highlightColor: 'white',
+		fullWord: true,
+		fullLine: false,
 	},
 	{
 		name: 'declarations',
 		priority: 1,
 		keywords: ['class', 'function', 'const'],
 		textColor: 'red',
-	}
+		fullWord: true,
+		fullLine: false,
+	},
+	{
+		name: 'comments',
+		priority: 2,
+		keywords: ['//'],
+		textColor: 'gray',
+		fullWord: false,
+		fullLine: true,
+	},
 ]
 
 
@@ -26,9 +37,17 @@ export const CodeBox = () => {
 	const editable = React.useRef<HTMLElement>();
 	const [value, setValue] = React.useState<string>('');
 
-	const syntaxGroups: SyntaxGroupType[] = mockData;
+	const syntaxGroups: SyntaxGroupType[] = mockData.sort((a, b) => b.priority - a.priority);
 
-	const colors = ['red', 'green', 'blue', 'yellow', 'black']
+
+	const generateKeywordsMap = (sgs: SyntaxGroupType[]) => {
+		let newMap = new Map<Array<string>, SyntaxGroupType>();
+		sgs.forEach(sg => {
+			newMap.set(sg.keywords, sg);
+		})
+		return newMap;
+	}
+
 
 	const sanitizeConf = {
 		allowedTags: ['pre']
@@ -57,7 +76,7 @@ export const CodeBox = () => {
 			if (!found) {
 				newLine += word;
 			}
-			if (index != keywords.length - 1){
+			if (index !== keywords.length - 1){
 				newLine += ' '
 			}
 			index += 1
@@ -65,14 +84,57 @@ export const CodeBox = () => {
 		return newLine;
 	}
 
+	const parseLine = (line: string) => {
+		let newLine = line
+		syntaxGroups.forEach(sg => {
+			console.log(sg.name)
+			sg.keywords.forEach(keyword => {
+				let currentPos = 0;
+				let f = newLine.indexOf(keyword, currentPos)
+				while (f > -1) {
+					currentPos = f;
+					let isMatch = false;
+					if (sg.fullWord && ((newLine.at(currentPos - 1) === ' ' && newLine.at(currentPos + keyword.length) === ' ') || (newLine.at(currentPos - 1) === ' ' && newLine.length === currentPos + keyword.length) || (currentPos === 0 && newLine.at(currentPos + keyword.length) === ' ') || (currentPos === 0 && newLine.length === currentPos + keyword.length))){
+						isMatch = true;
+					}
+					else if (!sg.fullWord) {
+						isMatch = true;
+					}
+
+					if (!isMatch) {
+						f = newLine.indexOf(keyword, currentPos + 1)
+						continue;
+					}
+					if (sg.fullLine) {
+						newLine = newLine.slice(0, currentPos) + wrapText(newLine.slice(currentPos, newLine.length), sg.textColor, sg.highlightColor);
+						break
+					}
+					else {
+						const left = newLine.slice(0, currentPos);
+						const right = newLine.slice(currentPos + keyword.length, newLine.length);
+						const center =  wrapText(newLine.slice(currentPos, currentPos + keyword.length), sg.textColor, sg.highlightColor);
+					
+
+						newLine = left + center + right;
+						currentPos += center.length;
+						f = newLine.indexOf(keyword, currentPos)
+						//console.log(f, currentPos, newLine)
+					}
+				} 
+			})
+		})
+		return newLine;
+	}
+	
+
 
 	const colorValue = (newVal: string) => {
 		let newerVal = ''
 		const lines =  newVal.split('\n');
 		for (let i = 0; i < lines.length - 1; i++){
-			newerVal += parseKeywordsInLine(lines[i]) + '\n';
+			newerVal += parseLine(lines[i]) + '\n';
 		}
-		newerVal += parseKeywordsInLine(lines[lines.length - 1])
+		newerVal += parseLine(lines[lines.length - 1])
 		return newerVal;
 	}
 
