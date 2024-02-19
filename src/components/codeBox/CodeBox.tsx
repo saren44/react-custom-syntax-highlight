@@ -30,6 +30,14 @@ const mockData: SyntaxGroupType[] = [
 		fullWord: false,
 		fullLine: true,
 	},
+	{
+		name: 'toDo',
+		priority: 3,
+		keywords: ['ToDo'],
+		textColor: 'yellow',
+		fullWord: false,
+		fullLine: false,
+	},
 ]
 
 
@@ -38,7 +46,6 @@ export const CodeBox = () => {
 	const [value, setValue] = React.useState<string>('');
 
 	const syntaxGroups: SyntaxGroupType[] = mockData.sort((a, b) => b.priority - a.priority);
-
 
 	const generateKeywordsMap = (sgs: SyntaxGroupType[]) => {
 		let newMap = new Map<Array<string>, SyntaxGroupType>();
@@ -85,13 +92,14 @@ export const CodeBox = () => {
 	}
 
 	const parseLine = (line: string) => {
-		let newLine = line
+		let newLine = line;
+		let ignoreFromBack = 0;
 		syntaxGroups.forEach(sg => {
 			console.log(sg.name)
 			sg.keywords.forEach(keyword => {
 				let currentPos = 0;
 				let f = newLine.indexOf(keyword, currentPos)
-				while (f > -1) {
+				while (f > -1 && f < newLine.length - ignoreFromBack) {
 					currentPos = f;
 					let isMatch = false;
 					if (sg.fullWord && ((newLine.at(currentPos - 1) === ' ' && newLine.at(currentPos + keyword.length) === ' ') || (newLine.at(currentPos - 1) === ' ' && newLine.length === currentPos + keyword.length) || (currentPos === 0 && newLine.at(currentPos + keyword.length) === ' ') || (currentPos === 0 && newLine.length === currentPos + keyword.length))){
@@ -107,7 +115,8 @@ export const CodeBox = () => {
 					}
 					if (sg.fullLine) {
 						newLine = newLine.slice(0, currentPos) + wrapText(newLine.slice(currentPos, newLine.length), sg.textColor, sg.highlightColor);
-						break
+						ignoreFromBack = newLine.length - currentPos;
+						break;
 					}
 					else {
 						const left = newLine.slice(0, currentPos);
