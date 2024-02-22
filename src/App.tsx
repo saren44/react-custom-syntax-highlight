@@ -5,6 +5,7 @@ import { CodeBox, mockData } from './components/codeBox/CodeBox';
 import { SyntaxGroupBox } from './components/SyntaxGroupBox/SyntaxGroupBox';
 import { newGroupTemplate } from './components/SyntaxGroupBox/types';
 import { SyntaxGroupType } from './components/codeBox/types';
+import { SyntaxGroupsList } from './components/syntaxGroupList/SyntaxGroupsList';
 
 function App() {
   const [sgs, setSgs] = React.useState<SyntaxGroupType[]>([]);
@@ -14,6 +15,7 @@ function App() {
       <pre className='pageHeader'> react custom syntax highlighting </pre>
       <div className='pageContent'>
         <CodeBox syntaxGroups={sgs.sort((a, b) => b.priority - a.priority)}/>
+        <SyntaxGroupsList data={sgs.sort((a, b) => b.priority - a.priority)}/>
         <SyntaxGroupBox initialDisplay={newGroupTemplate} callback={(e) => setSgs(sgs.concat(e))}/>
       </div>
 
