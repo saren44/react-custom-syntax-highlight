@@ -83,6 +83,33 @@ body {
   background-color: lightblue;
 }
 
+input:focus {
+  outline: none;
+}
+
+input[type=text] {
+  opacity: 0.3;
+  transition: opacity 0.5s;
+  border: 1px solid black;
+}
+
+input[type=text]:focus {
+  opacity: 1;
+}
+
+
+
+
+input[type=color] {
+  background-color: white;
+  padding: 0;
+  border: 0;
+}
+
+input[type=color]:hover {
+  cursor: pointer;
+}
+
 
 .textInput {
   font-family: "Ubuntu Mono", monospace;
@@ -108,4 +135,14 @@ button {
   width: 100px;
   height: 25px;
   margin-left: 10px;
+  border: 2px solid black;
+  border-radius: 0;
+  background-color: inherit;
+  cursor: pointer
 }
+
+button:hover {
+  border: dotted;
+}
+
+
