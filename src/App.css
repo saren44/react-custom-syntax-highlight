@@ -76,6 +76,11 @@ body {
   height: 50px;
   margin: 10px;
   border: 2px solid black;
+  cursor: pointer;
+}
+
+.highlighted {
+  background-color: lightblue;
 }
 
 

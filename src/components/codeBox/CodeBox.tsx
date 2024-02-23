@@ -9,8 +9,8 @@ export const mockData: SyntaxGroupType[] = [
 		name: 'types',
 		priority: 0,
 		regex: /int|bool|float|string/,
-		textColor: 'green',
-		highlightColor: 'white',
+		textColor: '#00ff00',
+		highlightColor: '#ffffff',
 		fullWord: true,
 		fullLine: false,
 	},
@@ -18,7 +18,7 @@ export const mockData: SyntaxGroupType[] = [
 		name: 'declarations',
 		priority: 1,
 		regex: /class|void|const/,
-		textColor: 'red',
+		textColor: '#ff0000',
 		fullWord: true,
 		fullLine: false,
 	},
@@ -26,7 +26,7 @@ export const mockData: SyntaxGroupType[] = [
 		name: 'comments',
 		priority: 2,
 		regex: /\/\/.*|\/\*.*\*\//,
-		textColor: 'gray',
+		textColor: '#7e7e7e',
 		fullWord: false,
 		fullLine: true,
 	},
@@ -34,7 +34,7 @@ export const mockData: SyntaxGroupType[] = [
 		name: 'toDo',
 		priority: 3,
 		regex: /todo/i,
-		textColor: 'yellow',
+		textColor: '#ffff00',
 		fullWord: false,
 		fullLine: false,
 	},
@@ -87,10 +87,6 @@ export const CodeBox = ({syntaxGroups}: CodeBoxProps) => {
 	const wrapText = (text: string, textColor?: string, highlightColor?: string) => {
 		return `<span style="${textColor ? `color: ${textColor}` : ''}; ${highlightColor ? `background-color: ${highlightColor}` : ''}">` + text + '</span>'
 	}
-
-
-
-
 
 
 	const newParseLine = (line: string) => {
